@@ -1,95 +1,75 @@
-<!doctype html>
-<html lang="{{ app()->getLocale() }}">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> JSON reader</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/dropzone.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/dropzone.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <br />
+    <h3 align="center"> Laravel 8 Dropzone Real Programmmer</h3>
+    <br />
 
-        <title>Laravel</title>
-
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
-
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Raleway', sans-serif;
-                font-weight: 100;
-                height: 100vh;
-                margin: 0;
-            }
-
-            .full-height {
-                height: 100vh;
-            }
-
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
-
-            .position-ref {
-                position: relative;
-            }
-
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .title {
-                font-size: 84px;
-            }
-
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-                        <a href="{{ route('register') }}">Register</a>
-                    @endauth
-                </div>
-            @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Select JSON file</h3>
+        </div>
+        <div class="panel-body">
+            <form id="dropzoneForm" class="dropzone" action="{{ route('upload') }}">
+                @csrf
+            </form>
+            <div align="center">
+                <button type="button" class="btn btn-info" id="submit-all">Upload</button>
             </div>
         </div>
-    </body>
+    </div>
+    <br />
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Uploaded JSON</h3>
+        </div>
+        <div class="panel-body" id="uploaded_image">
+        </div>
+    </div>
+</div>
+</body>
 </html>
+
+<script type="text/javascript">
+    Dropzone.options.dropzoneForm = {
+        autoProcessQueue : false,
+        acceptedFiles : ".json",
+        maxFiles: 1,
+        init:function(){
+            var submitButton = document.querySelector("#submit-all");
+            myDropzone = this;
+            submitButton.addEventListener('click', function(){
+                myDropzone.processQueue();
+            });
+            this.on("complete", function(){
+                if(this.getQueuedFiles().length == 0 && this.getUploadingFiles().length == 0)
+                {
+                    var _this = this;
+                    _this.removeAllFiles();
+                }
+
+            });
+        }
+    };
+
+    $(document).on('click', '.remove_image', function(){
+        var name = $(this).attr('id');
+        $.ajax({
+            url:"{{ route('dropzone.delete_image') }}",
+            data:{name : name},
+            success:function(data){
+                load_images();
+            }
+        })
+    });
+
+
+</script>
