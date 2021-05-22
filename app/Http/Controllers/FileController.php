@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Jobs\ProcessJson;
 use App\Models\Account;
 use App\Models\Creditcard;
 use App\Post;
@@ -25,19 +26,13 @@ class FileController extends Controller
         Client::create($data);
         **/
 
-        $jsonFile = $request->file('file');
-        $jsonArray = json_decode(file_get_contents($jsonFile), true);
 
+        $jsonFile = file_get_contents($request->file('file'));
+        //debug($jsonFile)
+        $jsonArray = json_decode($jsonFile, true);
 
-        foreach ($jsonArray as $item)
-        {
+        ProcessJson::dispatch($request->file('file'));
 
-            $creditcardJson = $this->array_remove($item,'credit_card');
-            $account = Account::create($item);
-
-            $account->creditcard()->create($creditcardJson);
-
-        }
 
         return response()->json(['success' => 'json']);
 
@@ -50,7 +45,7 @@ class FileController extends Controller
      * @param $key The key pointing to the desired value
      * @return The value mapped to $key or null if none
      */
-     function array_remove(array &$arr, $key) {
+    function array_remove(array &$arr, $key) {
         if (array_key_exists($key, $arr)) {
             $val = $arr[$key];
             unset($arr[$key]);
