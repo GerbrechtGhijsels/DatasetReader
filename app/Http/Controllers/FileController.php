@@ -8,6 +8,7 @@ use App\Models\Account;
 use App\Models\Creditcard;
 use App\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
@@ -27,11 +28,17 @@ class FileController extends Controller
         **/
 
 
-        $jsonFile = file_get_contents($request->file('file'));
-        //debug($jsonFile)
-        $jsonArray = json_decode($jsonFile, true);
+        $uploadedFile = $request->file('file');
+        $filename = time().$uploadedFile->getClientOriginalName();
 
-        ProcessJson::dispatch($request->file('file'));
+        Storage::disk('local')->putFileAs(
+            'files/',
+            $uploadedFile,
+            $filename
+        );
+
+
+        ProcessJson::dispatch(Storage::path('files/'.$filename));
 
 
         return response()->json(['success' => 'json']);

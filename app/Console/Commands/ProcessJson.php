@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Http\File;
+use Illuminate\Support\Facades\Storage;
 
 class ProcessJson extends Command
 {
@@ -37,6 +39,15 @@ class ProcessJson extends Command
      */
     public function handle()
     {
-        \App\Jobs\ProcessJson::dispatch($this->argument('filepath'));
+
+        $filename = time().basename($this->argument('filepath'));
+
+        Storage::disk('local')->putFileAs(
+            'files/',
+            new File($this->argument('filepath')),
+            $filename
+        );
+
+        \App\Jobs\ProcessJson::dispatch(Storage::path('files/'.$filename));
     }
 }

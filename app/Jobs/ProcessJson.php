@@ -37,14 +37,22 @@ class ProcessJson implements ShouldQueue
         $jsonFile = file_get_contents($this->filepath);
         $jsonArray = json_decode($jsonFile, true);
 
+        $id = 0;
+        $idFinnised = 0;
+        $idLast = 0;
+
+        $index = 0;
 
         foreach ($jsonArray as $item)
         {
+
             $creditcardJson = $this->array_remove($item,'credit_card');
             $account = Account::create($item);
 
             $account->creditcard()->create($creditcardJson);
-
+            $added = true;
+            //$id = $account->id;
+            $index++;
         }
     }
 
