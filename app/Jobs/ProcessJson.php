@@ -9,13 +9,19 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
+use Imtigger\LaravelJobStatus\JobStatus;
+use Imtigger\LaravelJobStatus\Trackable;
+use LimitIterator;
 
 class ProcessJson implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Trackable;
 
     ///Users/gerbrechtghijsels/Projects/DatasetReader/JSONTest/test.json
+    ///Users/gerbrechtghijsels/Projects/DatasetReader/challenge.json
     protected $filepath;
+    protected $id;
 
     /**
      * Create a new job instance.
@@ -24,7 +30,9 @@ class ProcessJson implements ShouldQueue
      */
     public function __construct( $filepath)
     {
+        $this->prepareStatus();
         $this->filepath = $filepath;
+
     }
 
     /**
@@ -34,26 +42,30 @@ class ProcessJson implements ShouldQueue
      */
     public function handle()
     {
+
+        $this->getJobStatusId();
+        $jobStatus = JobStatus::whereKey($this->getJobStatusId())->firstOrFail();
+
         $jsonFile = file_get_contents($this->filepath);
         $jsonArray = json_decode($jsonFile, true);
 
-        $id = 0;
-        $idFinnised = 0;
-        $idLast = 0;
+        $this->setProgressMax(count($jsonArray));
 
-        $index = 0;
-
-        foreach ($jsonArray as $item)
+        for($index=$jobStatus->progress_now; $index < count($jsonArray); $index++)
         {
 
-            $creditcardJson = $this->array_remove($item,'credit_card');
-            $account = Account::create($item);
+            $creditcardJson = $this->array_remove($jsonArray[$index],'credit_card');
+            $account = Account::create($jsonArray[$index]);
+
+            //$this->setProgressNow($index);
+            $this->setInput(['id'=>$account->getKey()]);
 
             $account->creditcard()->create($creditcardJson);
-            $added = true;
-            //$id = $account->id;
-            $index++;
+            $this->id = $account->getKey();
+            $this->setProgressNow($index+1);
         }
+
+        Storage::delete($this->filepath);
     }
 
     /**
