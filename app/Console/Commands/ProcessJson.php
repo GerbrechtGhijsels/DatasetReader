@@ -48,6 +48,7 @@ class ProcessJson extends Command
             $filename
         );
 
-        \App\Jobs\ProcessJson::dispatch(Storage::path('files/'.$filename));
+        $filters = [ 'date_of_birth' => 'nullable|olderThan:18|youngerThan:65'];
+        \App\Jobs\ProcessJson::dispatch(Storage::path('files/'.$filename), $filters)->onQueue('processing');
     }
 }

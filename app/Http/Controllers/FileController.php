@@ -37,8 +37,8 @@ class FileController extends Controller
             $filename
         );
 
-
-        ProcessJson::dispatch(Storage::path('files/'.$filename));
+        $filters = [ 'date_of_birth' => 'nullable|olderThan:18|youngerThan:65'];
+        ProcessJson::dispatch(Storage::path('files/'.$filename),$filters)->onQueue('processing');
 
 
         return response()->json(['success' => 'json']);
