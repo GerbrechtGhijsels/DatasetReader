@@ -8,7 +8,7 @@ Het json bestand wordt pas verwerkt als het volgende command wordt gebruikt:
 ./vendor/bin/sail artisan queue:work --timeout=600
 
 In de database zijn de volgende tables accounts, creditcards, failed_jobs, jobs en job_statuses.
-De database is te bereiken via phpmyadmin via dit url http://0.0.0.0:8085/.
+De database is te bereiken via phpmyadmin via dit url http://0.0.0.0:8085/. Username is root Er is geen Password: 
 
 In de tables accounts en creditcards is alle data te zien van Challenge.json. 
 Hiernaast zijn alle taken te zien in jobs en alle gefaalde taken in failed_jobs. In de job_statuses 

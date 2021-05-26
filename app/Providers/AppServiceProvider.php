@@ -39,10 +39,14 @@ class AppServiceProvider extends ServiceProvider
         {
             $minAge = ( ! empty($parameters)) ? (int) $parameters[0] : 100;
             try {
-                return (new DateTime)->diff(new DateTime($value))->y <= $minAge;
+                return (new DateTime)->diff(new DateTime($value))->y >= $minAge;
             } catch (Exception $e) {
+                try {
                 $date = str_replace('/', '-', $value);
                 return (new DateTime)->diff(new DateTime($date))->y >= $minAge;
+                } catch (Exception $e) {
+                    return false;
+                }
             }
         });
 
@@ -57,8 +61,12 @@ class AppServiceProvider extends ServiceProvider
             try {
                 return (new DateTime)->diff(new DateTime($value))->y <= $maxAge;
             } catch (Exception $e) {
-                $date = str_replace('/', '-', $value);
-                return (new DateTime)->diff(new DateTime($date))->y <= $maxAge;
+                try {
+                    $date = str_replace('/', '-', $value);
+                    return (new DateTime)->diff(new DateTime($date))->y <= $maxAge;
+                } catch (Exception $e) {
+                    return false;
+                }
             }
         });
     }

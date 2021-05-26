@@ -10,7 +10,7 @@
 <body>
 <div class="container-fluid">
     <br />
-    <h3 align="center"> Laravel 8 Dropzone Real Programmmer</h3>
+    <h3 align="center"> JSON to Database</h3>
     <br />
 
     <div class="panel panel-default">
@@ -51,17 +51,5 @@
             });
         }
     };
-
-    $(document).on('click', '.remove_image', function(){
-        var name = $(this).attr('id');
-        $.ajax({
-            url:"{{ route('dropzone.delete_image') }}",
-            data:{name : name},
-            success:function(data){
-                load_images();
-            }
-        })
-    });
-
 
 </script>
