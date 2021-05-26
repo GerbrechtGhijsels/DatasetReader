@@ -17,7 +17,7 @@ class CreateCreditcardsTable extends Migration
             $table->increments('id');
             $table->integer('account_id');
             $table->string('type')->nullable();
-            $table->integer('number')->nullable();
+            $table->bigInteger('number')->nullable();
             $table->string('name')->nullable();
             $table->string('expirationDate')->nullable();
         });

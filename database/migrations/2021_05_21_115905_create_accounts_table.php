@@ -18,7 +18,7 @@ class CreateAccountsTable extends Migration
             $table->string('name')->nullable();
             $table->string('address')->nullable();
             $table->integer('checked')->nullable();
-            $table->string('description')->nullable();
+            $table->string('description',1400)->nullable();
             $table->string('interest')->nullable();
             $table->string('date_of_birth')->nullable();
             $table->string('email')->nullable();
