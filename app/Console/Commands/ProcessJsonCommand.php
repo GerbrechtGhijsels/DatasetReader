@@ -2,14 +2,17 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ProcessJsonJob;
 use Illuminate\Console\Command;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\FileHelper;
 
-class ProcessJson extends Command
+class ProcessJsonCommand extends Command
 {
     /**
      * The name and signature of the console command.
+     * Only works locally!
      *
      * @var string
      */
@@ -40,15 +43,9 @@ class ProcessJson extends Command
     public function handle()
     {
 
-        $filename = time().basename($this->argument('filepath'));
-
-        Storage::disk('local')->putFileAs(
-            'files/',
-            new File($this->argument('filepath')),
-            $filename
-        );
+        $filename = FileHelper::uploadFileWithPath($this->argument('filepath'));
 
         $filters = [ 'date_of_birth' => 'nullable|olderThan:18|youngerThan:65'];
-        \App\Jobs\ProcessJson::dispatch(Storage::path('files/'.$filename), $filters)->onQueue('processing');
+        ProcessJsonJob::dispatch(Storage::path('files/'.$filename), $filters);
     }
 }

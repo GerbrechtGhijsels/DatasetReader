@@ -26,14 +26,6 @@
             </div>
         </div>
     </div>
-    <br />
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Uploaded JSON</h3>
-        </div>
-        <div class="panel-body" id="uploaded_image">
-        </div>
-    </div>
 </div>
 </body>
 </html>

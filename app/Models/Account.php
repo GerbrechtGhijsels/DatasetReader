@@ -18,16 +18,10 @@ class Account extends Model
         'name','address', 'checked', 'description', 'interest', 'date_of_birth', 'email', 'account'
     ];
 
-
     public $timestamps = false;
 
-
     public function creditcard(){
-
-
         return $this->hasMany(Creditcard::class);
-
-
     }
 
 }
